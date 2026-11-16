@@ -150,7 +150,14 @@
                 <!-- PAGINAÇÃO -->
                 <div class="pagination">
                     <button id="btnAnterior" class="btn btn-secondary"> ← Anterior </button>
-                    <span id="paginaAtual"> Página 1 </span>
+
+                    <span class="paginacao-info">
+                        Página
+                        <input type="number" id="campoPagina" min="1" value="1">
+                        /
+                        <span id="totalPaginas"> 1 </span>
+                    </span>
+
                     <button id="btnProximo" class="btn btn-secondary"> Próxima → </button>
                 </div>
             </section>

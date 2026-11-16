@@ -6,6 +6,9 @@ const API_URL = "https://localhost:7063";
 
 let paginaAtual = 1;
 
+//total de paginas do ultimo filtro aplicado
+let totalPaginasAtual = 1;
+
 //estado atual da ordenação da tabela
 const ordenacao = {
     ordem: "DataCadastro",
@@ -42,7 +45,8 @@ const camposData = [
 ];
 
 const totalRegistros = document.getElementById("totalRegistros");
-const paginaAtualElemento = document.getElementById("paginaAtual");
+const campoPagina = document.getElementById("campoPagina");
+const totalPaginasElemento = document.getElementById("totalPaginas");
 
 const btnImprimir = document.getElementById("btnImprimir");
 const btnNovo = document.getElementById("btnNovo");
@@ -180,19 +184,35 @@ async function filtrarLembretes() {
 
         const resultado = await response.json();
 
+        const totalPaginas = Math.max(
+            1,
+            Math.ceil(resultado.total / resultado.tamanhoPagina)
+        );
+
+        //filtros novos podem reduzir os resultados e deixar a página atual fora do alcance:
+        //volta para a última página existente e busca novamente
+        if (paginaAtual > totalPaginas) {
+            paginaAtual = totalPaginas;
+
+            await filtrarLembretes();
+            return;
+        }
+
+        totalPaginasAtual = totalPaginas;
+
         renderizarLembretes(resultado.lembretes);
 
         totalRegistros.textContent =
             `${resultado.total} registros`;
 
-        paginaAtualElemento.textContent =
-            `Página ${resultado.numeroPagina}`;
+        campoPagina.value = paginaAtual;
+        totalPaginasElemento.textContent = totalPaginas;
 
         btnAnterior.disabled =
             paginaAtual <= 1;
 
         btnProximo.disabled =
-            paginaAtual * resultado.tamanhoPagina >= resultado.total;
+            paginaAtual >= totalPaginas;
 
     } catch (error) {
 
@@ -558,6 +578,12 @@ btnFiltrar.addEventListener("click", () => {
     filtrarLembretes();
 });
 
+//ao alterar o tamanho da página, busca novamente desde a primeira página
+tamanhoPagina.addEventListener("change", () => {
+    paginaAtual = 1;
+    filtrarLembretes();
+});
+
 filtroDescricao.addEventListener("keyup", event => {
     if (event.key === "Enter") {
         paginaAtual = 1;
@@ -619,6 +645,38 @@ btnAnterior.addEventListener("click", () => {
 
 btnProximo.addEventListener("click", () => {
     paginaAtual++;
+    filtrarLembretes();
+});
+
+//ir para uma página digitada ao pressionar Enter
+campoPagina.addEventListener("keydown", event => {
+    if (event.key !== "Enter") {
+        return;
+    }
+
+    event.preventDefault();
+
+    let paginaEscolhida = parseInt(campoPagina.value, 10);
+
+    //valor inválido/vazio: restaura a página atual
+    if (isNaN(paginaEscolhida)) {
+        campoPagina.value = paginaAtual;
+        return;
+    }
+
+    //menor que 1 -> primeira página | maior que o total -> última página
+    paginaEscolhida = Math.min(
+        Math.max(paginaEscolhida, 1),
+        totalPaginasAtual
+    );
+
+    //mesma página: apenas restaura o valor normalizado
+    if (paginaEscolhida === paginaAtual) {
+        campoPagina.value = paginaAtual;
+        return;
+    }
+
+    paginaAtual = paginaEscolhida;
     filtrarLembretes();
 });
 

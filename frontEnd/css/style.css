@@ -300,6 +300,27 @@ th {
     margin-top: 20px;
 }
 
+.paginacao-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#campoPagina {
+    width: 55px;
+    text-align: center;
+    padding: 0 6px;
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+/* remove as setas do input numérico */
+#campoPagina::-webkit-inner-spin-button,
+#campoPagina::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 .toast {
     position: fixed;
     right: 25px;
