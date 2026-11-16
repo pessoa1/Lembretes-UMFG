@@ -202,6 +202,33 @@ th {
     background: #f5f5f5;
 }
 
+/* ORDENAÇÃO NAS COLUNAS DA TABELA */
+.th-ordenacao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-ordenacao {
+    border: none;
+    background: none;
+    padding: 0 2px;
+    font-size: 14px;
+    color: #999;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.btn-ordenacao:hover {
+    color: #222;
+}
+
+.btn-ordenacao.ativo {
+    color: #222;
+    font-weight: bold;
+}
+
 .actions {
     display: flex;
     gap: 5px;

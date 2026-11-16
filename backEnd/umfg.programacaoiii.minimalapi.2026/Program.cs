@@ -102,7 +102,7 @@ public class Program
                     page.PageColor(Color.FromHex("#FFFFFF"));
 
                     page.Header()
-                        .Text("Relat�rio de Lembretes")
+                        .Text("Relatório de Lembretes")
                         .SemiBold()
                         .FontSize(20)
                         .FontColor(Colors.Blue.Medium);
@@ -129,9 +129,9 @@ public class Program
 
                                     tabela.Header(header =>
                                     {
-                                        header.Cell().Text("Descri��o").SemiBold();
+                                        header.Cell().Text("Descrição").SemiBold();
                                         header.Cell().Text("Cadastro").SemiBold();
-                                        header.Cell().Text("Atualiza��o").SemiBold();
+                                        header.Cell().Text("Atualização").SemiBold();
                                         header.Cell().Text("Status").SemiBold();
                                     });
 
@@ -249,6 +249,8 @@ public class Program
             ("dataatualizacao", "ASC") => query.OrderBy(x => x.DataAtualizacao),
             ("dataatualizacao", "DESC") => query.OrderByDescending(x => x.DataAtualizacao),
             ("datacadastro", "ASC") => query.OrderBy(x => x.DataCadastro),
+            ("isativo", "ASC") => query.OrderBy(x => x.IsAtivo),
+            ("isativo", "DESC") => query.OrderByDescending(x => x.IsAtivo),
             _ => query.OrderByDescending(x => x.DataCadastro), //padrao: mais recentes primeiro
         };
 

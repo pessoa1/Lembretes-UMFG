@@ -6,6 +6,12 @@ const API_URL = "https://localhost:7063";
 
 let paginaAtual = 1;
 
+//estado atual da ordenação da tabela
+const ordenacao = {
+    ordem: "DataCadastro",
+    direcao: "DESC",
+};
+
 
 // ========================================
 // ELEMENTOS DA PÁGINA
@@ -54,6 +60,7 @@ const tituloFormulario = document.getElementById("tituloFormulario");
 // ========================================
 
 document.addEventListener("DOMContentLoaded", () => {
+    atualizarIndicadoresOrdenacao();
     filtrarLembretes();
 });
 
@@ -68,9 +75,8 @@ function montarParametrosFiltro() {
     params.append("TamanhoPagina", tamanhoPagina.value);
     params.append("Descricao", filtroDescricao.value);
 
-    /*TODO: implementar ordenação no html*/
-    params.append("Ordem", "DataCadastro");
-    params.append("Direcao", "DESC");
+    params.append("Ordem", ordenacao.ordem);
+    params.append("Direcao", ordenacao.direcao);
 
     //datas só são enviadas quando preenchidas (podem ficar vazias)
     if (filtroDataCadastroInicial.value) {
@@ -542,6 +548,40 @@ camposData.forEach(campo => {
 
     campo.addEventListener("input", removerInvalido);
     campo.addEventListener("change", removerInvalido);
+});
+
+// ========================================
+// ORDENAÇÃO
+// ========================================
+function atualizarIndicadoresOrdenacao() {
+    document.querySelectorAll(".btn-ordenacao").forEach(botao => {
+        const ativo = botao.dataset.ordem === ordenacao.ordem;
+
+        botao.classList.toggle("ativo", ativo);
+        botao.textContent = ativo
+            ? (ordenacao.direcao === "ASC" ? "▲" : "▼")
+            : "⇅";
+    });
+}
+
+document.querySelectorAll(".btn-ordenacao").forEach(botao => {
+    botao.addEventListener("click", () => {
+        const campo = botao.dataset.ordem;
+
+        if (ordenacao.ordem === campo) {
+            //mesma coluna: inverte a direção
+            ordenacao.direcao = ordenacao.direcao === "ASC" ? "DESC" : "ASC";
+        } else {
+            //coluna nova: ativa em ordem crescente
+            ordenacao.ordem = campo;
+            ordenacao.direcao = "ASC";
+        }
+
+        atualizarIndicadoresOrdenacao();
+
+        paginaAtual = 1;
+        filtrarLembretes();
+    });
 });
 
 // ========================================
