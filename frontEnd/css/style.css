@@ -25,6 +25,7 @@ body {
 
 .header h1 {
     margin-bottom: 5px;
+    color: #FFDC06;
 }
 
 .header p {
@@ -247,6 +248,10 @@ input.campo-invalido {
 .btn-primary {
     background: #222;
     color: white;
+}
+
+#btnNovo {
+    color: #FFDC06;
 }
 
 .btn-secondary {
