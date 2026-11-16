@@ -8,6 +8,12 @@ public sealed class Lembrete
     public DateTime DataAtualizacao { get; private set; } = DateTime.Now;
     public bool IsAtivo { get; private set; } = true;
 
+    /// <summary>
+    /// Categoria "Completo". Independente do IsAtivo:
+    /// um lembrete Ativo ou Completo permanece visivel; Inativo continua sendo exclusao (soft delete).
+    /// </summary>
+    public bool IsCompleto { get; private set; } = false;
+
     public Lembrete(string descricao)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(descricao);
@@ -15,6 +21,7 @@ public sealed class Lembrete
     }
 
     internal void SetDescricao(string descricao) => Descricao = descricao ?? throw new ArgumentNullException(nameof(descricao));
-    internal void SetAtivo(bool isAtivo) => IsAtivo = isAtivo;    
-    internal void Update() => DataAtualizacao = DateTime.Now;    
+    internal void SetAtivo(bool isAtivo) => IsAtivo = isAtivo;
+    internal void SetCompleto(bool isCompleto) => IsCompleto = isCompleto;
+    internal void Update() => DataAtualizacao = DateTime.Now;
 }

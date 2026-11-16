@@ -39,6 +39,9 @@ namespace umfg.programacaoiii.minimalapi._2026.Migrations
                     b.Property<bool>("IsAtivo")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<bool>("IsCompleto")
+                        .HasColumnType("tinyint(1)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Lembrete");

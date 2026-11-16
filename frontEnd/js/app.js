@@ -26,6 +26,9 @@ const formLembrete = document.getElementById("formLembrete");
 const lembreteId = document.getElementById("lembreteId");
 const descricao = document.getElementById("descricao");
 
+const grupoCompleto = document.getElementById("grupoCompleto");
+const lembreteCompleto = document.getElementById("lembreteCompleto");
+
 const listaLembretes = document.getElementById("listaLembretes");
 const mensagemVazia = document.getElementById("mensagemVazia");
 
@@ -246,15 +249,22 @@ async function imprimirLembretes() {
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
 
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "relatorio-lembretes.pdf";
+        //abre o PDF em uma nova guia
+        const novaGuia = window.open(url, "_blank");
 
-        document.body.appendChild(a)
-        a.click();
-        a.remove();
+        //popup bloqueado pelo navegador: baixa o arquivo como alternativa
+        if (!novaGuia) {
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "relatorio-lembretes.pdf";
 
-        setTimeout(() => URL.revokeObjectURL(url), 10000)
+            document.body.appendChild(a)
+            a.click();
+            a.remove();
+        }
+
+        //tempo maior para dar tempo de carregar/exibir na nova guia
+        setTimeout(() => URL.revokeObjectURL(url), 60000)
 
     } catch (error) {
 
@@ -327,6 +337,9 @@ async function buscarLembrete(id) {
         lembreteId.value = lembrete.id;
         descricao.value = lembrete.descricao;
 
+        lembreteCompleto.checked = lembrete.isCompleto;
+        grupoCompleto.classList.remove("hidden");
+
         tituloFormulario.textContent = "Editar lembrete";
 
         formulario.classList.remove("hidden");
@@ -351,7 +364,8 @@ async function atualizarLembrete() {
     try {
 
         const dados = {
-            descricao: descricao.value
+            descricao: descricao.value,
+            isCompleto: lembreteCompleto.checked
         };
 
         const response = await fetch(
@@ -475,17 +489,15 @@ function renderizarLembretes(lembretes) {
             </td>
 
             <td>
-                <span class="status ${
+                ${
                     lembrete.isAtivo
-                        ? "status-ativo"
-                        : "status-inativo"
-                }">
-                    ${
-                        lembrete.isAtivo
-                            ? "Ativo"
-                            : "Inativo"
-                    }
-                </span>
+                        ? `<span class="status ${lembrete.isCompleto ? "status-completo" : "status-ativo"}">
+                            ${lembrete.isCompleto ? "Completo" : "Ativo"}
+                        </span>`
+                        : `<span class="status status-inativo">
+                            Inativo
+                        </span>`
+                }
             </td>
 
             <td>
@@ -558,6 +570,10 @@ function abrirFormularioNovo() {
     lembreteId.value = "";
     descricao.value = "";
 
+    //o estado "Completo" só muda pela edição
+    lembreteCompleto.checked = false;
+    grupoCompleto.classList.add("hidden");
+
     tituloFormulario.textContent = "Novo lembrete";
 
     formulario.classList.remove("hidden");
@@ -568,6 +584,9 @@ function fecharFormulario() {
     formulario.classList.add("hidden");
     formLembrete.reset();
     lembreteId.value = "";
+
+    lembreteCompleto.checked = false;
+    grupoCompleto.classList.add("hidden");
 }
 
 // ========================================

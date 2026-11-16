@@ -3,4 +3,6 @@
 public sealed class LembreteDTO
 {
     public string Descricao { get; set; } = string.Empty;
+
+    public bool IsCompleto { get; set; } = false;
 }

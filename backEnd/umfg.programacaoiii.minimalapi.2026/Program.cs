@@ -141,9 +141,9 @@ public class Program
                                         tabela.Cell().Text(lembrete.DataCadastro.ToLocalTime()).FontSize(10);
                                         tabela.Cell().Text(lembrete.DataAtualizacao.ToLocalTime()).FontSize(10);
                                         tabela.Cell()
-                                            .Text(lembrete.IsAtivo  ? "Ativo" : "Inativo")
+                                            .Text(lembrete.IsAtivo ? (lembrete.IsCompleto ? "Completo" : "Ativo") : "Inativo")
                                             .FontSize(10)
-                                            .FontColor(lembrete.IsAtivo ? Colors.Green.Medium : Colors.Red.Medium);
+                                            .FontColor(lembrete.IsAtivo ? (lembrete.IsCompleto ? Colors.Blue.Medium : Colors.Green.Medium) : Colors.Red.Medium);
                                     }
                                 });
                         });
@@ -181,6 +181,7 @@ public class Program
                 return Results.NotFound();
 
             lembreteExistente.SetDescricao(dto.Descricao);
+            lembreteExistente.SetCompleto(dto.IsCompleto);
             lembreteExistente.Update();
 
             contexto.Lembrete.Update(lembreteExistente);
@@ -249,8 +250,9 @@ public class Program
             ("dataatualizacao", "ASC") => query.OrderBy(x => x.DataAtualizacao),
             ("dataatualizacao", "DESC") => query.OrderByDescending(x => x.DataAtualizacao),
             ("datacadastro", "ASC") => query.OrderBy(x => x.DataCadastro),
-            ("isativo", "ASC") => query.OrderBy(x => x.IsAtivo),
-            ("isativo", "DESC") => query.OrderByDescending(x => x.IsAtivo),
+            //status composto: Inativo < Ativo < Completo (ASC) | inverso (DESC)
+            ("isativo", "ASC") => query.OrderBy(x => x.IsAtivo).ThenBy(x => x.IsCompleto),
+            ("isativo", "DESC") => query.OrderByDescending(x => x.IsAtivo).ThenByDescending(x => x.IsCompleto),
             _ => query.OrderByDescending(x => x.DataCadastro), //padrao: mais recentes primeiro
         };
 

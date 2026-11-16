@@ -53,6 +53,69 @@ body {
     font-weight: bold;
 }
 
+.form-group-horizontal {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+}
+
+/*mais espaço entre a caixa de texto e o slider*/
+#grupoCompleto {
+    margin-top: 18px;
+}
+
+/* SLIDER (TOGGLE SWITCH) */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+/*o checkbox real fica invisível, apenas controla o estado*/
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+}
+
+.slider {
+    position: absolute;
+    inset: 0;
+    background: #ccc;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.slider::before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 3px;
+    top: 3px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s;
+}
+
+.switch input:checked + .slider {
+    background: #1976d2;
+}
+
+.switch input:checked + .slider::before {
+    transform: translateX(22px);
+}
+
+.switch input:focus-visible + .slider {
+    outline: 2px solid #333;
+    outline-offset: 1px;
+}
+
 input,
 select {
     height: 40px;
@@ -228,6 +291,11 @@ td {
     border-bottom: 1px solid #eee;
 }
 
+/* quebra a linha quando o texto é muito grande (mesmo sem espaços) */
+td {
+    overflow-wrap: anywhere;
+}
+
 th {
     background: #f5f5f5;
 }
@@ -262,10 +330,12 @@ th {
 .actions {
     display: flex;
     gap: 5px;
+    flex-wrap: nowrap;
 }
 
 .actions .btn {
     padding: 7px 10px;
+    white-space: nowrap;
 }
 
 .status {
@@ -274,6 +344,7 @@ th {
     border-radius: 20px;
     font-size: 12px;
     font-weight: bold;
+    white-space: nowrap;
 }
 
 .status-ativo {
@@ -284,6 +355,11 @@ th {
 .status-inativo {
     background: #f5dddd;
     color: #9b2226;
+}
+
+.status-completo {
+    background: #dbeafe;
+    color: #1d4ed8;
 }
 
 .empty {
