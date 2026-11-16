@@ -31,13 +31,25 @@ public sealed class LembreteQueryDTO
         
         public string Descricao { get; set; } = string.Empty;
         
-        public DateTime DataCadastroInicial { get; set; } = DateTime.MinValue;
-        
-        public DateTime DataCadastroFinal { get; set; } = DateTime.MinValue;
+        /// <summary>
+        /// Nulo = sem limite inicial.
+        /// </summary>
+        public DateTime? DataCadastroInicial { get; set; }
 
-        public DateTime DataAtualizacaoInicial { get; set; } = DateTime.MaxValue;
+        /// <summary>
+        /// Nulo = sem limite final.
+        /// </summary>
+        public DateTime? DataCadastroFinal { get; set; }
 
-        public DateTime DataAtualizacaoFinal { get; set; } = DateTime.MaxValue;
+        /// <summary>
+        /// Nulo = sem limite inicial.
+        /// </summary>
+        public DateTime? DataAtualizacaoInicial { get; set; }
+
+        /// <summary>
+        /// Nulo = sem limite final.
+        /// </summary>
+        public DateTime? DataAtualizacaoFinal { get; set; }
     }
 
     public sealed class LembreteQueryResponseDTO

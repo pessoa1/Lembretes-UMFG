@@ -23,6 +23,18 @@ const mensagemVazia = document.getElementById("mensagemVazia");
 const filtroDescricao = document.getElementById("filtroDescricao");
 const tamanhoPagina = document.getElementById("tamanhoPagina");
 
+const filtroDataCadastroInicial = document.getElementById("filtroDataCadastroInicial");
+const filtroDataCadastroFinal = document.getElementById("filtroDataCadastroFinal");
+const filtroDataEdicaoInicial = document.getElementById("filtroDataEdicaoInicial");
+const filtroDataEdicaoFinal = document.getElementById("filtroDataEdicaoFinal");
+
+const camposData = [
+    filtroDataCadastroInicial,
+    filtroDataCadastroFinal,
+    filtroDataEdicaoInicial,
+    filtroDataEdicaoFinal,
+];
+
 const totalRegistros = document.getElementById("totalRegistros");
 const paginaAtualElemento = document.getElementById("paginaAtual");
 
@@ -46,30 +58,107 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ========================================
+// MONTAGEM DOS PARÂMETROS DE FILTRO
+// (usada por /lembretes/filtro e /lembretes/imprimir)
+// ========================================
+function montarParametrosFiltro() {
+    const params = new URLSearchParams();
+
+    params.append("NumeroPagina", paginaAtual);
+    params.append("TamanhoPagina", tamanhoPagina.value);
+    params.append("Descricao", filtroDescricao.value);
+
+    /*TODO: implementar ordenação no html*/
+    params.append("Ordem", "DataCadastro");
+    params.append("Direcao", "DESC");
+
+    //datas só são enviadas quando preenchidas (podem ficar vazias)
+    if (filtroDataCadastroInicial.value) {
+        params.append("DataCadastroInicial", filtroDataCadastroInicial.value);
+    }
+
+    if (filtroDataCadastroFinal.value) {
+        params.append("DataCadastroFinal", filtroDataCadastroFinal.value);
+    }
+
+    if (filtroDataEdicaoInicial.value) {
+        params.append("DataAtualizacaoInicial", filtroDataEdicaoInicial.value);
+    }
+
+    if (filtroDataEdicaoFinal.value) {
+        params.append("DataAtualizacaoFinal", filtroDataEdicaoFinal.value);
+    }
+
+    return params;
+}
+
+// ========================================
+// VALIDAÇÃO DAS DATAS DO FILTRO
+// Retorna false quando alguma regra é violada
+// ========================================
+function limparCamposInvalidos() {
+    camposData.forEach(campo => campo.classList.remove("campo-invalido"));
+}
+
+function marcarCampoInvalido(...elementos) {
+    elementos.forEach(elemento => elemento.classList.add("campo-invalido"));
+}
+
+function validarDatasFiltro() {
+    limparCamposInvalidos();
+
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    const pares = [
+        { inicial: filtroDataCadastroInicial, final: filtroDataCadastroFinal, nome: "criação" },
+        { inicial: filtroDataEdicaoInicial, final: filtroDataEdicaoFinal, nome: "edição" },
+    ];
+
+    const erros = [];
+
+    for (const par of pares) {
+        //sufixo T00:00:00 garante parsing no fuso local
+        const dataInicial = par.inicial.value ? new Date(`${par.inicial.value}T00:00:00`) : null;
+        const dataFinal = par.final.value ? new Date(`${par.final.value}T00:00:00`) : null;
+
+        if (dataInicial && dataInicial > hoje) {
+            marcarCampoInvalido(par.inicial);
+            erros.push(`Data de ${par.nome} maior que a atual`);
+        }
+
+        if (dataFinal && dataFinal > hoje) {
+            marcarCampoInvalido(par.final);
+            erros.push(`Data de ${par.nome} maior que a atual`);
+        }
+
+        if (dataInicial && dataFinal && dataInicial > dataFinal) {
+            marcarCampoInvalido(par.inicial, par.final);
+            erros.push(`Data de ${par.nome} inicial maior que a data final`);
+        }
+    }
+
+    if (erros.length > 0) {
+        //Set elimina mensagens repetidas quando o mesmo erro vale para os dois pares
+        mostrarToast([...new Set(erros)].join("\n"), "alerta");
+        return false;
+    }
+
+    return true;
+}
+
+// ========================================
 // GET /lembretes/filtro
 // ========================================
 async function filtrarLembretes() {
     try {
-        const dataAtual = new Date();
-        const dataFormatada = dataAtual.getFullYear() + "-" +
-            String(dataAtual.getMonth() + 1).padStart(2, "0") + "-" +
-            String(dataAtual.getDate()).padStart(2, "0");
+        if (!validarDatasFiltro()) {
+            return;
+        }
 
-        const params = new URLSearchParams();
+        const params = montarParametrosFiltro();
 
-        params.append("NumeroPagina", paginaAtual);
-        params.append("TamanhoPagina", tamanhoPagina.value);
-        params.append("Descricao", filtroDescricao.value);
-
-        /*TODO: implementar todos os filtros no html*/
-        params.append("Ordem", "DataCadastro");
-        params.append("Direcao", "DESC");
-        params.append("DataCadastroInicial", dataFormatada);
-        params.append("DataCadastroFinal", dataFormatada);
-        params.append("DataAtualizacaoInicial", dataFormatada);
-        params.append("DataAtualizacaoFinal", dataFormatada);
-        
-        console.log('filtro-> params', params);
+        console.log('filtro-> params', params.toString());
 
         const response = await fetch(
             `${API_URL}/lembretes/filtro?${params}`
@@ -110,34 +199,19 @@ async function filtrarLembretes() {
 // ========================================
 async function imprimirLembretes() {
     try {
-        const dataAtual = new Date();
-        const dataFormatada = dataAtual.getFullYear() + "-" +
-            String(dataAtual.getMonth() + 1).padStart(2, "0") + "-" +
-            String(dataAtual.getDate()).padStart(2, "0");
+        if (!validarDatasFiltro()) {
+            return;
+        }
 
-        const params = new URLSearchParams();
-
-        params.append("NumeroPagina", paginaAtual);
-        params.append("TamanhoPagina", tamanhoPagina.value);
-        params.append("Descricao", filtroDescricao.value);
-
-        /*TODO: implementar todos os filtros no html*/
-        params.append("Ordem", "DataCadastro");
-        params.append("Direcao", "DESC");
-        params.append("DataCadastroInicial", dataFormatada);
-        params.append("DataCadastroFinal", dataFormatada);
-        params.append("DataAtualizacaoInicial", dataFormatada);
-        params.append("DataAtualizacaoFinal", dataFormatada);
+        const params = montarParametrosFiltro();
 
         const response = await fetch(
             `${API_URL}/lembretes/imprimir?${params}`
         );
 
         if (!response.ok) {
-            throw new Error("Erro ao filtrar lembretes.");
+            throw new Error("Erro ao gerar o relatório.");
         }
-        
-        console.log("teste");
 
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
@@ -462,6 +536,14 @@ filtroDescricao.addEventListener("keyup", event => {
     }
 });
 
+//ao alterar o valor de um campo de data, ele volta ao visual normal
+camposData.forEach(campo => {
+    const removerInvalido = () => campo.classList.remove("campo-invalido");
+
+    campo.addEventListener("input", removerInvalido);
+    campo.addEventListener("change", removerInvalido);
+});
+
 // ========================================
 // PAGINAÇÃO
 // ========================================
@@ -493,12 +575,22 @@ function formatarData(data) {
 }
 
 
-function mostrarToast(mensagem) {
+function mostrarToast(mensagem, tipo = "info") {
     const toast = document.getElementById("toast");
 
     toast.textContent = mensagem;
 
+    //remove variantes anteriores antes de aplicar a nova
+    toast.classList.remove("hidden", "toast-alerta");
+
+    if (tipo === "alerta") {
+        toast.classList.add("toast-alerta");
+    }
+
     toast.classList.remove("hidden");
 
-    setTimeout(() => { toast.classList.add("hidden"); }, 3000);
+    setTimeout(() => {
+        toast.classList.add("hidden");
+        toast.classList.remove("toast-alerta");
+    }, 3000);
 }

@@ -68,6 +68,10 @@ select:focus {
     border-color: #333;
 }
 
+input.campo-invalido {
+    border: 2px solid #c62828;
+}
+
 #formulario h2 {
     margin-bottom: 20px;
 }
@@ -84,6 +88,55 @@ select:focus {
     grid-template-columns: 1fr 180px auto;
     gap: 15px;
     align-items: end;
+}
+
+/* ACCORDION DE FILTROS */
+.accordion {
+    margin-top: 15px;
+    border: 1px solid #e5e5e5;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.accordion summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    font-weight: bold;
+    cursor: pointer;
+    background: #fafafa;
+    list-style: none;
+    user-select: none;
+}
+
+.accordion summary::-webkit-details-marker {
+    display: none;
+}
+
+.accordion summary::after {
+    content: "▾";
+    font-size: 15px;
+    transition: transform 0.2s;
+}
+
+.accordion[open] summary::after {
+    transform: rotate(180deg);
+}
+
+.accordion-conteudo {
+    padding: 15px;
+    display: grid;
+    grid-template-columns: 1fr 1fr auto 1fr 1fr;
+    gap: 15px;
+    align-items: end;
+    border-top: 1px solid #e5e5e5;
+}
+
+.accordion-separador {
+    width: 1px;
+    background: #e5e5e5;
+    align-self: stretch;
 }
 
 .btn {
@@ -198,6 +251,11 @@ th {
     color: white;
     padding: 15px 20px;
     border-radius: 5px;
+    white-space: pre-line;
+}
+
+.toast-alerta {
+    background: #c2410c;
 }
 
 @media (max-width: 700px) {
@@ -210,6 +268,16 @@ th {
 
     .filtro {
         grid-template-columns: 1fr;
+    }
+
+    .accordion-conteudo {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .accordion-separador {
+        grid-column: 1 / -1;
+        width: 100%;
+        height: 1px;
     }
 
     table {
