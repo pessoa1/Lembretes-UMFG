@@ -54,6 +54,10 @@ const btnProximo = document.getElementById("btnProximo");
 
 const tituloFormulario = document.getElementById("tituloFormulario");
 
+const modalExcluir = document.getElementById("modalExcluir");
+const btnCancelarExcluir = document.getElementById("btnCancelarExcluir");
+const btnConfirmarExcluir = document.getElementById("btnConfirmarExcluir");
+
 
 // ========================================
 // INICIALIZAÇÃO
@@ -369,20 +373,29 @@ async function atualizarLembrete() {
 // ========================================
 // DELETE /lembretes/{id}
 // ========================================
-async function excluirLembrete(id) {
+let lembreteParaExcluir = null;
 
-    const confirmou = confirm(
-        "Deseja realmente excluir este lembrete?"
-    );
+function excluirLembrete(id) {
+    lembreteParaExcluir = id;
 
-    if (!confirmou) {
+    modalExcluir.classList.remove("hidden");
+}
+
+function fecharModalExcluir() {
+    lembreteParaExcluir = null;
+
+    modalExcluir.classList.add("hidden");
+}
+
+async function confirmarExclusao() {
+    if (!lembreteParaExcluir) {
         return;
     }
 
     try {
 
         const response = await fetch(
-            `${API_URL}/lembretes/${id}`,
+            `${API_URL}/lembretes/${lembreteParaExcluir}`,
             {
                 method: "DELETE"
             }
@@ -395,6 +408,8 @@ async function excluirLembrete(id) {
         mostrarToast(
             "Lembrete excluído com sucesso!"
         );
+
+        fecharModalExcluir();
 
         await filtrarLembretes();
 
@@ -492,6 +507,14 @@ btnNovo.addEventListener("click", () => {
 
 btnCancelar.addEventListener("click", () => {
     fecharFormulario();
+});
+
+btnConfirmarExcluir.addEventListener("click", () => {
+    confirmarExclusao();
+});
+
+btnCancelarExcluir.addEventListener("click", () => {
+    fecharModalExcluir();
 });
 
 formLembrete.addEventListener("submit", async (event) => {

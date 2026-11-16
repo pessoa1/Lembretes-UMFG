@@ -24,23 +24,25 @@
                 </div>                
             </header>
 
-            <!-- FORMULÁRIO -->
-            <section id="formulario" class="card hidden">
-                <h2 id="tituloFormulario">Novo lembrete</h2>
+            <!-- MODAL DO FORMULÁRIO -->
+            <div id="formulario" class="modal-overlay hidden">
+                <section class="modal">
+                    <h2 id="tituloFormulario">Novo lembrete</h2>
 
-                <form id="formLembrete">
-                    <input type="hidden" id="lembreteId">
-                    <div class="form-group">
-                        <label for="descricao"> Descrição </label>
-                        <input type="text" id="descricao" placeholder="Digite o lembrete..." maxlength="500" required>
-                    </div>
+                    <form id="formLembrete">
+                        <input type="hidden" id="lembreteId">
+                        <div class="form-group">
+                            <label for="descricao"> Descrição </label>
+                            <input type="text" id="descricao" placeholder="Digite o lembrete..." maxlength="500" required>
+                        </div>
 
-                    <div class="form-actions">
-                        <button type="button" id="btnCancelar" class="btn btn-secondary"> Cancelar </button>
-                        <button type="submit" class="btn btn-primary"> Salvar </button>
-                    </div>
-                </form>
-            </section>
+                        <div class="form-actions">
+                            <button type="button" id="btnCancelar" class="btn btn-secondary"> Cancelar </button>
+                            <button type="submit" class="btn btn-primary"> Salvar </button>
+                        </div>
+                    </form>
+                </section>
+            </div>
 
             <!-- FILTRO -->
             <section class="card">
@@ -153,6 +155,20 @@
                 </div>
             </section>
         </main>
+
+        <!-- MODAL DE EXCLUSÃO -->
+        <div id="modalExcluir" class="modal-overlay hidden">
+            <section class="modal">
+                <h2>Excluir lembrete</h2>
+
+                <p class="modal-mensagem"> Deseja realmente excluir este lembrete? Esta ação não pode ser desfeita. </p>
+
+                <div class="form-actions">
+                    <button type="button" id="btnCancelarExcluir" class="btn btn-secondary"> Cancelar </button>
+                    <button type="button" id="btnConfirmarExcluir" class="btn btn-danger"> Excluir </button>
+                </div>
+            </section>
+        </div>
 
         <!-- TOAST -->
         <div id="toast" class="toast hidden"></div>

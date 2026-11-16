@@ -76,6 +76,36 @@ input.campo-invalido {
     margin-bottom: 20px;
 }
 
+/* MODAL DO FORMULÁRIO */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+}
+
+.modal {
+    width: 100%;
+    max-width: 480px;
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.modal h2 {
+    margin-bottom: 15px;
+}
+
+.modal-mensagem {
+    color: #666;
+    margin-bottom: 5px;
+}
+
 .form-actions {
     display: flex;
     justify-content: flex-end;
@@ -279,6 +309,7 @@ th {
     padding: 15px 20px;
     border-radius: 5px;
     white-space: pre-line;
+    z-index: 200;
 }
 
 .toast-alerta {
